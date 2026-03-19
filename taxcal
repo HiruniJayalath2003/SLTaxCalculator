@@ -1,0 +1,176 @@
+# ============================================
+# SRI LANKAN TAX CALCULATOR PROJECT
+# ============================================
+
+# ============================================
+# SRI LANKA TAX BRACKETS (Effective April 1, 2025)
+# ============================================
+# Annual Income (LKR):
+#   Up to 1,800,000: 0% (Tax-free!)
+#   1,800,001 - 2,800,000: 6%
+#   2,800,001 - 3,300,000: 18%
+#   3,300,001 - 3,800,000: 24%
+#   3,800,001 - 4,300,000: 30%
+#   Greater than 4,300,000: 36%
+# ============================================
+
+
+def calculate_income_tax(annual_income):
+    # Implement the progressive tax calculation
+    tax=0.0 
+    #0 tax for first bracket (up to 1,800,000)   
+    if (annual_income<=1800000):
+        tax=0
+    # 6% tax between (1,800,001- 2,800,000)
+    elif(annual_income<=2800000):
+        tax=(annual_income-1800000)*0.06
+    #18% tax between (2,800,001- 3,300,000)    
+    elif(annual_income<=3300000):
+        tax=(2800000-1800000)*0.06+(annual_income-2800000)*0.18
+    #24% tax between (3,300,001- 3,800,000)    
+    elif(annual_income<=3800000):
+        tax=(2800000-1800000)*0.06+(3300000-2800000)*0.18+(annual_income-3300000)*0.24  
+    #30% tax between (3,800,001- 4,300,000)    
+    elif(annual_income<=4300000):
+        tax=(2800000-1800000)*0.06+(3300000-2800000)*0.18+(3800000-3300000)*0.24+(annual_income-3800000)*0.30
+    #36% tax for incomes Greater than 4,300,000
+    else:
+        tax=(2800000-1800000)*0.06+(3300000-2800000)*0.18+(3800000-3300000)*0.24+(4300000-3800000)*0.30+(annual_income-4300000)*0.36
+    return tax                  
+
+
+def calculate_effective_tax_rate(annual_income):
+    #check  annual income is 0 or not if annual income is 0 return 0%
+    if (annual_income==0):
+        return 0.0
+    #calculate total income tax- use previously defined functioN
+    tax=calculate_income_tax(annual_income)
+    #calculate tax tate
+    tax_rate=(tax/annual_income)*100
+    return tax_rate
+
+
+def calculate_take_home(annual_income):
+    #calculate total income tax- use previously defined function
+    tax=calculate_income_tax(annual_income)
+    #calculate take home
+    take_home=(annual_income-tax)
+    return take_home
+
+
+# ============================================
+# HELPER FUNCTIONS FOR DISPLAY (PROVIDED)
+# ============================================
+
+def print_taxpayer_details(income):
+    """Print detailed tax information for a single taxpayer"""
+    tax = calculate_income_tax(income)
+    effective_rate = calculate_effective_tax_rate(income)
+    take_home = calculate_take_home(income)
+    monthly_take_home = take_home / 12
+
+    print(f"\nAnnual Income: Rs. {income:,.2f}")
+    print(f"  Income Tax: Rs. {tax:,.2f} ({effective_rate:.2f}%)")
+    print(f"  Take-Home (Annual): Rs. {take_home:,.2f}")
+    print(f"  Take-Home (Monthly): Rs. {monthly_take_home:,.2f}")
+    print("-" * 60)
+
+
+def print_ranking(sorted_income_tax_pairs):
+    """Print ranked list of taxpayers by tax paid"""
+    for rank, (income, tax) in enumerate(sorted_income_tax_pairs, start=1):
+        print(f"{rank}. Rs. {income:,.2f} - Tax Paid: Rs. {tax:,.2f}")
+
+
+def print_high_earners(high_earner_incomes):
+    """Print details for high earners (>= Rs. 4,300,000)"""
+    for income in high_earner_incomes:
+        tax = calculate_income_tax(income)
+        print(f"Income: Rs. {income:,.2f} - Tax: Rs. {tax:,.2f}")
+
+
+# ============================================
+# MAIN PROGRAM
+# ============================================
+
+def main():
+    """Main program to demonstrate tax calculations"""
+
+    # Test data: Multiple taxpayer incomes (in LKR)
+    incomes = [2500000, 4000000, 5000000, 1500000, 3500000]
+
+    print("=" * 60)
+    print("SRI LANKAN TAX CALCULATOR (April 2025 Tax Reforms)")
+    print("=" * 60)
+
+    # ========================================
+    # TODO 1: Calculate taxes for all incomes using map()
+    # ========================================
+    # Use map() to calculate income tax for each income
+    #calculate income tax using map() and lambda
+    taxes =list(map(lambda income:calculate_income_tax(income),incomes))
+      # YOUR CODE HERE - replace with map()
+
+
+    # ========================================
+    # TODO 2: Filter high earners using filter()
+    # ========================================
+    # Find all incomes >= Rs. 4,300,000 (highest tax bracket)
+
+    high_earners = list(filter(lambda incomes : incomes >=4300000, incomes)) 
+     # YOUR CODE HERE - replace with filter()
+
+
+    # ========================================
+    # TODO 3: Create (income, tax) pairs and sort
+    # ========================================
+    # 1. Use zip() to pair incomes with taxes
+    # 2. Use sorted() to rank by tax amount (highest first)
+    taxes=list(zip(incomes,taxes))
+
+    #key=lambda x:x[1] sort using 2nd element because (income,tax) tuple tax is 2nd element 
+    #reverse=True use to rank by tax amount (highest first)
+    sorted_incomes_taxes = sorted(taxes, key=lambda x:x[1],reverse=True)  # YOUR CODE HERE - replace with zip() and sorted()
+
+
+    # ========================================
+    # Display Results (Provided - No need to modify)
+    # ========================================
+
+    # Display detailed tax reports
+    print("\n" + "=" * 60)
+    print("DETAILED TAX REPORTS")
+    print("=" * 60)
+    for income in incomes:
+        print_taxpayer_details(income)
+
+    # Display top taxpayers ranking
+    print("\n" + "=" * 60)
+    print("TOP TAXPAYERS (Ranked by Tax Paid)")
+    print("=" * 60)
+    print_ranking(sorted_incomes_taxes)
+
+    # Display high earners
+    print("\n" + "=" * 60)
+    print("HIGH EARNERS (>= Rs. 4,300,000 - Top Tax Bracket)")
+    print("=" * 60)
+    print_high_earners(high_earners)
+
+    # ========================================
+    # BONUS: Calculate summary statistics
+    # ========================================
+    print("\n" + "=" * 60)
+    print("SUMMARY STATISTICS")
+    print("=" * 60)
+
+    # YOUR CODE HERE (BONUS)
+    # Calculate and print:
+    # - Total tax revenue: sum(taxes)
+    # - Average effective tax rate
+    # - Highest and lowest tax amounts: max(taxes), min(taxes)
+    # - Average monthly take-home
+
+
+# Run the program
+if __name__ == "__main__":
+    main()
